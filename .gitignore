@@ -132,3 +132,4 @@ dmypy.json
 # data folder
 data/images/
 generated_images/
+models/checkpoints
