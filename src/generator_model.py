@@ -22,7 +22,7 @@ class Block(nn.Module):
 
 
 class Generator(nn.Module):
-    def __init__(self, in_channels=3, features=64):
+    def __init__(self, in_channels=1, o_channels=2, features=64):
         super(Generator, self).__init__()
         self.initial_down = nn.Sequential(
             nn.Conv2d(in_channels, features, 4, 2, 1, padding_mode='reflect'),
@@ -49,7 +49,7 @@ class Generator(nn.Module):
         self.up6 = Block(features * 4 * 2, features * 2, down=False, act='relu', use_dropout=False) # 64x64
         self.up7 = Block(features * 2 * 2, features, down=False, act='relu', use_dropout=False)    # 128x128
         self.final_up = nn.Sequential(
-            nn.ConvTranspose2d(features * 2, in_channels, 4, 2, 1),
+            nn.ConvTranspose2d(features * 2, o_channels, 4, 2, 1),
             nn.Tanh()
         )
 
@@ -74,8 +74,8 @@ class Generator(nn.Module):
 
 
 def test():
-    x = torch.randn((1, 3, 256, 256))
-    model = Generator(in_channels=3, features=64)
+    x = torch.randn((1, 1, 256, 256))
+    model = Generator(in_channels=1, o_channels=2, features=64)
     print(model(x).shape)
 
 

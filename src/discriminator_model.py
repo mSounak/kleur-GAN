@@ -19,7 +19,7 @@ class Discriminator(nn.Module):
     def __init__(self, in_channels=3, features=[64, 128, 256, 512]):        # 256 -> 30x30
         super(Discriminator, self).__init__()
         self.initital = nn.Sequential(
-            nn.Conv2d(in_channels * 2, features[0], 4, 2, padding=1, padding_mode='reflect'),
+            nn.Conv2d(in_channels, features[0], 4, 2, padding=1, padding_mode='reflect'),
             nn.LeakyReLU(0.2),
         )
 
@@ -44,12 +44,12 @@ class Discriminator(nn.Module):
 
 
 def test():
-    x = torch.randn((1, 3, 286, 286))
-    y = torch.randn((1, 3, 286, 286))
+    x = torch.randn((1, 1, 256, 256))
+    y = torch.randn((1, 2, 256, 256))
 
     model = Discriminator()
     out = model(x, y)
-    print(out.shape)
+    print(out.shape)        # batch x 1 x 26 x 26
 
 if __name__ == '__main__':
     test()
