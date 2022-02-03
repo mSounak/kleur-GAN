@@ -43,7 +43,7 @@ def lab_to_rgb(L, ab):
     """
     
     L = (L + 1.) * 50.
-    ab = ab * 110.
+    ab = ab * 128.
     Lab = torch.cat([L, ab], dim=1).permute(0, 2, 3, 1).cpu().numpy()
     rgb_imgs = []
     for img in Lab:
