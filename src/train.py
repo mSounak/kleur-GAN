@@ -9,38 +9,34 @@ from discriminator_model import Discriminator
 from tqdm import tqdm
 
 
-def train_fn(disc, gen, loader, opt_disc, opt_gen, loss_L1, loss_BCE, g_scaler, d_scaler):
+def train_fn(disc, gen, loader, opt_disc, opt_gen, loss_L1, loss_BCE):
 
-    for idx, (x, y) in enumerate(tqdm(loader, leave=False)):
+    for idx, (x, y) in enumerate(tqdm(loader)):
         x, y = x.to(config.DEVICE), y.to(config.DEVICE)
 
         # Train Discriminator
-        with torch.cuda.amp.autocast():
-            fake_color = gen(x)
-            d_real = disc(x, y)
-            d_fake = disc(x, fake_color.detach())
+        fake_color = gen(x)
+        d_real = disc(x, y)
+        d_fake = disc(x, fake_color.detach())
 
-            d_real_loss = loss_BCE(d_real, torch.ones_like(d_real))
-            d_fake_loss = loss_BCE(d_fake, torch.zeros_like(d_fake))
+        d_real_loss = loss_BCE(d_real, torch.ones_like(d_real))
+        d_fake_loss = loss_BCE(d_fake, torch.zeros_like(d_fake))
 
-            d_loss = (d_real_loss + d_fake_loss) / 2
+        d_loss = (d_real_loss + d_fake_loss) / 2.
 
         opt_disc.zero_grad()
-        d_scaler.scale(d_loss).backward()
-        d_scaler.step(opt_disc)
-        d_scaler.update()
+        d_loss.backward()
+        opt_disc.step()
 
         # Train the generator
-        with torch.cuda.amp.autocast():
-            d_fake = disc(x, fake_color)
-            g_fake_loss = loss_BCE(d_fake, torch.ones_like(d_fake))
-            l1 = loss_L1(fake_color, y) * config.L1_LAMBDA
-            g_loss = g_fake_loss + l1
+        d_fake = disc(x, fake_color)
+        g_fake_loss = loss_BCE(d_fake, torch.ones_like(d_fake))
+        l1 = loss_L1(fake_color, y) * config.L1_LAMBDA
+        g_loss = g_fake_loss + l1
 
         opt_gen.zero_grad()
-        g_scaler.scale(g_loss).backward()
-        g_scaler.step(opt_gen)
-        g_scaler.update()
+        g_loss.backward()
+        opt_gen.step()
 
 
 
@@ -63,12 +59,9 @@ def main():
     train_loader = make_dataloaders(config.PARENT_DIR, 'train')
     val_loader = make_dataloaders(config.PARENT_DIR, 'val', batch_size=1)
 
-    g_scaler = torch.cuda.amp.GradScaler()
-    d_scaler = torch.cuda.amp.GradScaler()
-
 
     for epoch in range(config.NUM_EPOCHS):
-        train_fn(disc, gen, train_loader, opt_disc, opt_gen, loss_L1, loss_bce, g_scaler, d_scaler)
+        train_fn(disc, gen, train_loader, opt_disc, opt_gen, loss_L1, loss_bce)
 
 
         if config.SAVE_MODEL and epoch % 5 == 0:

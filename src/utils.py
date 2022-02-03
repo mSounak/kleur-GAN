@@ -60,7 +60,7 @@ def save_some_examples(gen, val_loader, epoch, folder):
         y_fake = gen(x)
         fake_img = lab_to_rgb(x, y_fake)
         fake_img = np.squeeze(fake_img)
-        Image.fromarray((fake_img * 255).astype(np.uint8)).save(folder + f"/y_gen_{epoch}.png")
+        Image.fromarray((fake_img * 255.).astype(np.uint8)).save(folder + f"/y_gen_{epoch}.png")
 
     gen.train()
 

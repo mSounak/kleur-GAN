@@ -133,3 +133,4 @@ dmypy.json
 data/images/
 generated_images/
 models/checkpoints
+/generated_images/
