@@ -39,7 +39,7 @@ class ColorizeDataset(Dataset):
 
         img_l = transforms.ToTensor()(img_l)
         L = img_l[[0], ...] / 50. - 1.    # Normalize to [-1, 1]
-        ab = img_l[[1, 2], ...] / 110.    # Normalize to [-1, 1]
+        ab = img_l[[1, 2], ...] / 128.    # Normalize to [-1, 1]
 
         return L, ab
 
@@ -48,7 +48,7 @@ class ColorizeDataset(Dataset):
 
 def make_dataloaders(paths, split, batch_size=16):
     dataset = ColorizeDataset(paths, split)
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=4) 
 
     return dataloader
 
@@ -59,6 +59,6 @@ if __name__ == '__main__':
 
     loader = make_dataloaders(img_path, 'val', 1)
 
-    x, y = next(iter(loader))
-    print(x.shape)      # batch x 1 x 256 x 256
-    print(y.shape)     # batch x 2 x 256 x 256
+    L, ab = next(iter(loader))
+    print(L.shape)      # batch x 1 x 256 x 256
+    print(ab.shape)     # batch x 2 x 256 x 256

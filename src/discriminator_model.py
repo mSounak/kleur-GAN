@@ -6,8 +6,8 @@ class CNNBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride=2):
         super(CNNBlock, self).__init__()
         self.conv = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, 4, stride, bias=False, padding_mode='reflect'),
-            nn.BatchNorm2d(out_channels),
+            nn.Conv2d(in_channels, out_channels, 4, stride, padding=1, bias=False, padding_mode='reflect'),
+            nn.InstanceNorm2d(out_channels, affine=True),
             nn.LeakyReLU(0.2),
         )
 
@@ -49,7 +49,7 @@ def test():
 
     model = Discriminator()
     out = model(x, y)
-    print(out.shape)        # batch x 1 x 26 x 26
+    print(out.shape)        # batch x 1 x 30 x 30
 
 if __name__ == '__main__':
     test()
