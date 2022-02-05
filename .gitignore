@@ -131,6 +131,9 @@ dmypy.json
 
 # data folder
 data/images/
-generated_images/
 models/checkpoints
-/generated_images/
+generated_images/BatchNorm
+generated_images/grid_viz
+generated_images/InstanceNorm
+generated_images/with_weights
+

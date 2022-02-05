@@ -8,7 +8,7 @@ class Block(nn.Module):
             nn.Conv2d(in_channels, out_channels, 4, stride=2, padding=1, bias=False, padding_mode='reflect') if down 
             else
                 nn.ConvTranspose2d(in_channels, out_channels, 4, 2, 1, bias=False),
-            nn.InstanceNorm2d(out_channels, affine=True),
+            nn.BatchNorm2d(out_channels),
             nn.ReLU() if act == 'relu' else nn.LeakyReLU(0.2),
         )
 

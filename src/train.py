@@ -7,7 +7,7 @@ from dataset import ColorizeDataset, make_dataloaders
 from generator_model import Generator
 from discriminator_model import Discriminator
 from tqdm import tqdm
-
+from init_weigths import init_weights
 
 def train_fn(disc, gen, loader, opt_disc, opt_gen, loss_L1, loss_BCE):
 
@@ -22,7 +22,7 @@ def train_fn(disc, gen, loader, opt_disc, opt_gen, loss_L1, loss_BCE):
         d_real_loss = loss_BCE(d_real, torch.ones_like(d_real))
         d_fake_loss = loss_BCE(d_fake, torch.zeros_like(d_fake))
 
-        d_loss = (d_real_loss + d_fake_loss) / 2.
+        d_loss = (d_real_loss + d_fake_loss) * 0.5
 
         opt_disc.zero_grad()
         d_loss.backward()
@@ -45,6 +45,9 @@ def train_fn(disc, gen, loader, opt_disc, opt_gen, loss_L1, loss_BCE):
 def main():
     disc = Discriminator().to(config.DEVICE)
     gen = Generator().to(config.DEVICE)
+    init_weights(model=gen)
+    init_weights(model=disc)
+
 
     opt_disc = optim.Adam(disc.parameters(), lr=config.LEARNING_RATE, betas=(0.5, 0.999))
     opt_gen = optim.Adam(gen.parameters(), lr=config.LEARNING_RATE, betas=(0.5, 0.999))
@@ -68,7 +71,7 @@ def main():
             save_checkpoint(gen, opt_gen, filename=config.CHECKPOINT_GEN)
             save_checkpoint(disc, opt_disc, filename=config.CHECKPOINT_DISC)
 
-        save_some_examples(gen, val_loader, epoch, folder="generated_images")
+        save_some_examples(gen, val_loader, epoch, folder="generated_images/with_weights/")
         
 
 

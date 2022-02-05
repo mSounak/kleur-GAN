@@ -4,6 +4,8 @@ import numpy as np
 from PIL import Image
 from torchvision.utils import save_image
 from skimage.color import rgb2lab, lab2rgb
+import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 class AverageMeter:
     def __init__(self):
@@ -43,13 +45,41 @@ def lab_to_rgb(L, ab):
     """
     
     L = (L + 1.) * 50.
-    ab = ab * 128.
+    ab = ab * 110.
     Lab = torch.cat([L, ab], dim=1).permute(0, 2, 3, 1).cpu().numpy()
     rgb_imgs = []
     for img in Lab:
-        img_rgb = lab2rgb(img)
-        rgb_imgs.append(img_rgb)
+        img_rgb = lab2rgb(img) * 255
+        rgb_imgs.append(img_rgb.astype(np.uint8))
     return np.stack(rgb_imgs, axis=0)
+
+def visualize(model, data, save=True):
+
+    L, ab = next(iter(data))
+    L = L.to(config.DEVICE)
+    ab = ab.to(config.DEVICE)
+
+    model.eval()
+    with torch.no_grad():
+        fake_color = model(L)
+
+    real_color = ab
+    fake_imgs = lab_to_rgb(L, fake_color)
+    real_imgs = lab_to_rgb(L, real_color)
+    fig = plt.figure(figsize=(15, 8))
+    for i in tqdm(range(6)):
+        ax = plt.subplot(3, 6, i + 1)
+        ax.imshow(L[i][0].cpu(), cmap='gray')
+        ax.axis("off")
+        ax = plt.subplot(3, 6, i + 1 + 6)
+        ax.imshow(fake_imgs[i])
+        ax.axis("off")
+        ax = plt.subplot(3, 6, i + 1 + 12)
+        ax.imshow(real_imgs[i])
+        ax.axis("off")
+    plt.show()
+    if save:
+        fig.savefig(f"generated_images/grid_viz/colorization.png")
 
 
 def save_some_examples(gen, val_loader, epoch, folder):
@@ -60,7 +90,7 @@ def save_some_examples(gen, val_loader, epoch, folder):
         y_fake = gen(x)
         fake_img = lab_to_rgb(x, y_fake)
         fake_img = np.squeeze(fake_img)
-        Image.fromarray((fake_img * 255.).astype(np.uint8)).save(folder + f"/y_gen_{epoch}.png")
+        Image.fromarray((fake_img)).save(folder + f"y_gen_{epoch}.png")
 
     gen.train()
 
