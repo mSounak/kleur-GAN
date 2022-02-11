@@ -26,6 +26,11 @@ class ColorizeDataset(Dataset):
             self.transforms = transforms.Compose([
                 transforms.Resize((IMG_SIZE, IMG_SIZE), transforms.InterpolationMode.BICUBIC),
             ])
+        else:
+            self.paths = [path]
+            self.transforms = transforms.Compose([
+                transforms.Resize((IMG_SIZE, IMG_SIZE), transforms.InterpolationMode.BICUBIC),
+            ])
 
         self.size = IMG_SIZE
         self.split = split

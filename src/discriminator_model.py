@@ -14,6 +14,7 @@ class CNNBlock(nn.Module):
     def forward(self, x):
         return self.conv(x)
 
+
 # x, y <- concatenate these along the channels
 class Discriminator(nn.Module):
     def __init__(self, in_channels=3, features=[64, 128, 256, 512]):        # 256 -> 30x30
@@ -41,8 +42,6 @@ class Discriminator(nn.Module):
         return self.model(x)
 
 
-
-
 def test():
     x = torch.randn((1, 1, 256, 256))
     y = torch.randn((1, 2, 256, 256))
@@ -50,6 +49,7 @@ def test():
     model = Discriminator()
     out = model(x, y)
     print(out.shape)        # batch x 1 x 30 x 30
+
 
 if __name__ == '__main__':
     test()

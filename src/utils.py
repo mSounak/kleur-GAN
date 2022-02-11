@@ -67,14 +67,14 @@ def visualize(model, data, save=True):
     fake_imgs = lab_to_rgb(L, fake_color)
     real_imgs = lab_to_rgb(L, real_color)
     fig = plt.figure(figsize=(15, 8))
-    for i in tqdm(range(6)):
-        ax = plt.subplot(3, 6, i + 1)
+    for i in tqdm(range(1)):
+        ax = plt.subplot(3, 1, i + 1)
         ax.imshow(L[i][0].cpu(), cmap='gray')
         ax.axis("off")
-        ax = plt.subplot(3, 6, i + 1 + 6)
+        ax = plt.subplot(3, 1, i + 1 + 1)
         ax.imshow(fake_imgs[i])
         ax.axis("off")
-        ax = plt.subplot(3, 6, i + 1 + 12)
+        ax = plt.subplot(3, 1, i + 1 + 2)
         ax.imshow(real_imgs[i])
         ax.axis("off")
     plt.show()
