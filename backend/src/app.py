@@ -1,13 +1,10 @@
 from fastapi import FastAPI, File, UploadFile
-from pydantic import BaseModel
 import torch
 import torch.optim as optim
-from typing import List
 import config
 from utils import load_checkpoint, lab_to_rgb, image2lab
 from generator_model import Generator
 import uvicorn
-import uuid
 from PIL import Image
 import numpy as np
 from fastapi.middleware.cors import CORSMiddleware
@@ -61,8 +58,6 @@ def predict(file: UploadFile = File(...)):
     
         # Lab to RGB
         rgb_imgs = lab_to_rgb(L, fake_colors)
-
-        name = f"/storage/{str(uuid.uuid4())}.png"
 
         fake_img = np.squeeze(rgb_imgs).tolist()
     
