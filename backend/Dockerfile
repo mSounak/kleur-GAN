@@ -18,7 +18,6 @@ COPY src/app.py/ /backend/
 COPY src/config.py/ /backend/
 COPY models/checkpoints/gen.pth.tar /backend/models/checkpoints/
 
-EXPOSE 8000
 
 # Make sure we use the virtualenv:
 ENV PATH="/opt/venv/bin:$PATH"

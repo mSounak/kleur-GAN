@@ -14,6 +14,9 @@ COPY --from=compile-image /opt/venv /opt/venv
 
 COPY . /frontend/
 
+ENV API_URL=${API_URL}
+ENV API_PORT=${API_PORT}
+
 EXPOSE 8501
 
 # Make sure we use the virtualenv:

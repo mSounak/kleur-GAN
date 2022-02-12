@@ -1,8 +1,9 @@
-from io import BytesIO
-from PIL import Image
-import streamlit as st
+import os
 import requests
 import numpy as np
+from PIL import Image
+import streamlit as st
+from io import BytesIO
 import matplotlib.pyplot as plt
 from torchvision import transforms
 
@@ -15,7 +16,7 @@ def predict(image, method):
 
     files = {'file': image.getvalue() if method=='Image' else image}
 
-    res = requests.post('http://172.18.0.1:8000/predict', files=files)
+    res = requests.post(f"http://{os.environ.get('API_URL')}:{os.environ.get('API_PORT')}/predict", files=files)
 
     rest = res.json()
 
@@ -79,19 +80,23 @@ elif method == 'URL':
     if click:
 
         if url is not None:
-            content = requests.get(url).content
-            image = Image.open(BytesIO(content))
-            rgb = predict(content, method)
+            try:
+                content = requests.get(url).content
+                image = Image.open(BytesIO(content))
+                rgb = predict(content, method)
 
-            img = transform(image)
-            fig, ax = plt.subplots(1, 2, sharex=True, sharey=True)
-            ax[0].imshow(img.permute(1, 2, 0))
-            ax[0].axis('off')
-            ax[0].title.set_text('Before')
-            ax[1].imshow(rgb)
-            ax[1].axis('off')
-            ax[1].title.set_text('After')
-            st.pyplot(fig)
+                img = transform(image)
+                fig, ax = plt.subplots(1, 2, sharex=True, sharey=True)
+                ax[0].imshow(img.permute(1, 2, 0))
+                ax[0].axis('off')
+                ax[0].title.set_text('Before')
+                ax[1].imshow(rgb)
+                ax[1].axis('off')
+                ax[1].title.set_text('After')
+                st.pyplot(fig)
+            except:
+                st.warning("Please enter a valid URL")
+                st.stop()
 
         else:
             st.warning("Please enter a URL")

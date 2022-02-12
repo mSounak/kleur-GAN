@@ -1,13 +1,13 @@
-from fastapi import FastAPI, File, UploadFile
 import torch
-import torch.optim as optim
-import uvicorn
-from PIL import Image
-import numpy as np
-from fastapi.middleware.cors import CORSMiddleware
 import config
-from utils import load_checkpoint, lab_to_rgb, image2lab
+import uvicorn
+import numpy as np
+from PIL import Image
+import torch.optim as optim
 from generator_model import Generator
+from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from utils import load_checkpoint, lab_to_rgb, image2lab
 
 
 app = FastAPI(root_path='/')
