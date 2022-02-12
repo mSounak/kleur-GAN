@@ -15,7 +15,7 @@ def predict(image, method):
 
     files = {'file': image.getvalue() if method=='Image' else image}
 
-    res = requests.post('http://localhost:8000/predict', files=files)
+    res = requests.post('http://172.18.0.1:8000/predict', files=files)
 
     rest = res.json()
 
@@ -53,6 +53,7 @@ if method == 'Image':
     image = st.file_uploader('Choose an image', type=['png', 'jpg', 'jpeg'])
     if image is not None:
         rgb = predict(image, method)
+        image = Image.open(image)
 
         img = transform(image)
         fig, ax = plt.subplots(1, 2, sharex=True, sharey=True)

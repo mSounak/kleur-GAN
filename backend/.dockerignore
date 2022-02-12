@@ -1,0 +1,7 @@
+# data folder
+data/
+models/checkpoints/disc.pth.tar
+models/.gitkeep
+generated_images/
+__pycache__/
+

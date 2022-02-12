@@ -1,13 +1,13 @@
 from fastapi import FastAPI, File, UploadFile
 import torch
 import torch.optim as optim
-import config
-from utils import load_checkpoint, lab_to_rgb, image2lab
-from generator_model import Generator
 import uvicorn
 from PIL import Image
 import numpy as np
 from fastapi.middleware.cors import CORSMiddleware
+import config
+from utils import load_checkpoint, lab_to_rgb, image2lab
+from generator_model import Generator
 
 
 app = FastAPI(root_path='/')
@@ -26,7 +26,7 @@ gen = Generator()
 # Optimizer of the model
 optim = optim.Adam(gen.parameters(), lr=config.LEARNING_RATE, betas=(0.5, 0.999))
 # loading the weights
-load_checkpoint('backend/models/checkpoints/gen.pth.tar', gen, optim, lr=config.LEARNING_RATE)
+load_checkpoint('/backend/models/checkpoints/gen.pth.tar', gen, optim, lr=config.LEARNING_RATE)
 
 @app.get("/")
 def read_root():
