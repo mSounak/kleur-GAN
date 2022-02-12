@@ -6,6 +6,7 @@ from torchvision.utils import save_image
 from skimage.color import rgb2lab, lab2rgb
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+from torchvision import transforms
 
 class AverageMeter:
     def __init__(self):
@@ -39,6 +40,22 @@ def update_losses(model, loss_meter_dict, count):
         loss = getattr(model, loss_name)
         loss_meter.update(loss.item(), count=count)
 
+def image2lab(image):
+
+    transform = transforms.Compose([
+        transforms.Resize((256, 256), transforms.InterpolationMode.BICUBIC),
+    ])
+
+    image = Image.open(image).convert('RGB')
+    img = transform(image)
+    img = np.array(img)
+    img_l = rgb2lab(img).astype(np.float32)     # Converting RGB to L * a * b
+    img_l = transforms.ToTensor()(img_l)
+    L = img_l[[0], ...] / 50. - 1.    # Normalize to [-1, 1]
+    ab = img_l[[1, 2], ...] / 110.    # Normalize to [-1, 1]
+
+    return L, ab
+
 def lab_to_rgb(L, ab):
     """
     Takes a batch of images
@@ -67,14 +84,14 @@ def visualize(model, data, save=True):
     fake_imgs = lab_to_rgb(L, fake_color)
     real_imgs = lab_to_rgb(L, real_color)
     fig = plt.figure(figsize=(15, 8))
-    for i in tqdm(range(1)):
-        ax = plt.subplot(3, 1, i + 1)
+    for i in tqdm(range(6)):
+        ax = plt.subplot(3, 6, i + 1)
         ax.imshow(L[i][0].cpu(), cmap='gray')
         ax.axis("off")
-        ax = plt.subplot(3, 1, i + 1 + 1)
+        ax = plt.subplot(3, 6, i + 1 + 6)
         ax.imshow(fake_imgs[i])
         ax.axis("off")
-        ax = plt.subplot(3, 1, i + 1 + 2)
+        ax = plt.subplot(3, 6, i + 1 + 12)
         ax.imshow(real_imgs[i])
         ax.axis("off")
     plt.show()
