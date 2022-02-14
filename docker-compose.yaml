@@ -4,27 +4,12 @@ services:
     image: msounak/kleur-api:latest
     ports:
       - "8000:8000"
-    networks:
-      kleur-network:
-        ipv4_address: 172.19.1.2
   client:
     image: msounak/kleur-client:latest
     environment:
-      - API_URL=172.19.1.2
+      - API_URL=api
       - API_PORT=8000
     ports:
       - "80:8501"
-    networks:
-      - kleur-network
     depends_on:
       - api
-
-networks:
-  kleur-network:
-    driver: bridge
-    enable_ipv6: false
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.19.1.0/16
-          gateway: 172.19.1.1
