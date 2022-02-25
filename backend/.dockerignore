@@ -4,4 +4,6 @@ models/checkpoints/disc.pth.tar
 models/.gitkeep
 generated_images/
 __pycache__/
+.idea/
+models/res_unet.pt
 

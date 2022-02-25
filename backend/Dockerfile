@@ -16,6 +16,8 @@ COPY src/utils.py /backend/
 COPY src/generator_model.py /backend/
 COPY src/app.py/ /backend/
 COPY src/config.py/ /backend/
+COPY src/res_unet.py /backend/
+COPY src/dataset.py /backend/
 COPY models/checkpoints/gen.pth.tar /backend/models/checkpoints/
 
 
