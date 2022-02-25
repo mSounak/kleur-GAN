@@ -8,10 +8,10 @@ from generator_model import Generator
 from discriminator_model import Discriminator
 from tqdm import tqdm
 from init_weigths import init_weights
+from res_unet import res_unet
 
 
 def train_fn(disc, gen, loader, opt_disc, opt_gen, loss_l1, loss_bce):
-
     for idx, (x, y) in enumerate(tqdm(loader)):
         x, y = x.to(config.DEVICE), y.to(config.DEVICE)
 
@@ -42,8 +42,8 @@ def train_fn(disc, gen, loader, opt_disc, opt_gen, loss_l1, loss_bce):
 
 def main():
     disc = Discriminator().to(config.DEVICE)
-    gen = Generator().to(config.DEVICE)
-    init_weights(model=gen)
+    gen = res_unet().to(config.DEVICE)
+    gen.load_state_dict(torch.load("models/res_unet.pt"))
     init_weights(model=disc)
 
     opt_disc = optim.Adam(disc.parameters(), lr=config.LEARNING_RATE, betas=(0.5, 0.999))
@@ -56,7 +56,7 @@ def main():
         load_checkpoint(config.CHECKPOINT_GEN, gen, opt_gen, config.LEARNING_RATE)
         load_checkpoint(config.CHECKPOINT_GEN, disc, opt_disc, config.LEARNING_RATE)
 
-    train_loader = make_dataloaders(config.PARENT_DIR, 'train')
+    train_loader = make_dataloaders(config.PARENT_DIR, 'train', batch_size=config.BATCH_SIZE)
     val_loader = make_dataloaders(config.PARENT_DIR, 'val', batch_size=1)
 
     for epoch in range(config.NUM_EPOCHS):
@@ -67,7 +67,7 @@ def main():
             save_checkpoint(disc, opt_disc, filename=config.CHECKPOINT_DISC)
 
         save_some_examples(gen, val_loader, epoch, folder="generated_images/with_weights/")
-        
+
 
 if __name__ == "__main__":
     main()

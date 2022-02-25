@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from torchvision import transforms
 
+
 class AverageMeter:
     def __init__(self):
         self.reset()
@@ -20,25 +21,28 @@ class AverageMeter:
         self.sum += count * val
         self.avg = self.sum / self.count
 
+
 def create_loss_meters():
-    loss_D_fake = AverageMeter()
-    loss_D_real = AverageMeter()
-    loss_D = AverageMeter()
-    loss_G_GAN = AverageMeter()
-    loss_G_L1 = AverageMeter()
-    loss_G = AverageMeter()
+    loss_d_fake = AverageMeter()
+    loss_d_real = AverageMeter()
+    loss_d = AverageMeter()
+    loss_g_gan = AverageMeter()
+    loss_g_l1 = AverageMeter()
+    loss_g = AverageMeter()
     
-    return {'loss_D_fake': loss_D_fake,
-            'loss_D_real': loss_D_real,
-            'loss_D': loss_D,
-            'loss_G_GAN': loss_G_GAN,
-            'loss_G_L1': loss_G_L1,
-            'loss_G': loss_G}
+    return {'loss_D_fake': loss_d_fake,
+            'loss_D_real': loss_d_real,
+            'loss_D': loss_d,
+            'loss_G_GAN': loss_g_gan,
+            'loss_G_L1': loss_g_l1,
+            'loss_G': loss_g}
+
 
 def update_losses(model, loss_meter_dict, count):
     for loss_name, loss_meter in loss_meter_dict.items():
         loss = getattr(model, loss_name)
         loss_meter.update(loss.item(), count=count)
+
 
 def image2lab(image):
 
@@ -56,11 +60,11 @@ def image2lab(image):
 
     return L, ab
 
+
 def lab_to_rgb(L, ab):
     """
     Takes a batch of images
     """
-    
     L = (L + 1.) * 50.
     ab = ab * 110.
     Lab = torch.cat([L, ab], dim=1).permute(0, 2, 3, 1).cpu().numpy()
@@ -69,6 +73,7 @@ def lab_to_rgb(L, ab):
         img_rgb = lab2rgb(img) * 255
         rgb_imgs.append(img_rgb.astype(np.uint8))
     return np.stack(rgb_imgs, axis=0)
+
 
 def visualize(model, data, save=True):
 
