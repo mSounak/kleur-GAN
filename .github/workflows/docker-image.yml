@@ -1,0 +1,22 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@main
+    - name: Build the Backend Docker image
+      run: docker build . --file backend/Dockerfile --tag msounak/kleur-api:latest
+    
+    - uses: actions/checkout@main
+    - name: Build the Client Docker image
+      run: docker build . --file frontend/Dockerfile --tag msounak/kleur-client:latest
