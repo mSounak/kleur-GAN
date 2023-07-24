@@ -7,18 +7,18 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install -r backend/requirements.txt
 
 FROM python:3.8-slim-buster AS build-image
 COPY --from=compile-image /opt/venv /opt/venv
 
-COPY src/utils.py /backend/
-COPY src/generator_model.py /backend/
-COPY src/app.py/ /backend/
-COPY src/config.py/ /backend/
-COPY src/res_unet.py /backend/
-COPY src/dataset.py /backend/
-COPY models/checkpoints/gen.pth.tar /backend/models/checkpoints/
+COPY backend/src/utils.py /backend/
+COPY backend/src/generator_model.py /backend/
+COPY backend/src/app.py/ /backend/
+COPY backend/src/config.py/ /backend/
+COPY backend/src/res_unet.py /backend/
+COPY backend/src/dataset.py /backend/
+# COPY backend/models/checkpoints/gen.pth.tar /backend/models/checkpoints/
 
 
 # Make sure we use the virtualenv:
